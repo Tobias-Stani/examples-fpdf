@@ -3,9 +3,14 @@ require('../fpdf.php');
 
 class PDF extends FPDF {
     function Header() {
+        // Agregar imagen en la esquina superior izquierda
+        //$this->Image('#', 10, 10, 20);
+
         $this->SetFont('Arial', 'B', 20);
-        $this->Cell(0, 10, 'Lista de usuarios', 0, 1, 'C');
-        $this->Ln(4); // Salto de línea con desplazamiento vertical de 10 unidades
+        $this->Cell(0, 10, 'LISTA DE USUARIOS', 0, 1, 'C');
+        $this->SetLineWidth(0.5); // Grosor de la línea
+        $this->Line(10, $this->GetY(), 200, $this->GetY()); // Dibujar línea debajo del título
+        $this->Ln(10);
     }
 
     function Footer() {
