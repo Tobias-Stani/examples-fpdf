@@ -1,0 +1,55 @@
+<?php
+require('../fpdf.php');
+
+class PDF extends FPDF
+{
+    function Header() {
+        // Agregar imagen en la esquina superior izquierda
+        $this->Image('logo.png', 10, 7, 18);
+
+        $this->SetFont('Arial', 'B', 20);
+        $this->Cell(0, 10, 'LISTA DE USUARIOS', 0, 1, 'C');
+        $this->SetLineWidth(0.5); // Grosor de la línea
+        $this->Line(10, $this->GetY(), 200, $this->GetY()); // Dibujar línea debajo del título
+        $this->Ln(10);
+    }
+
+    function Footer() {
+        $this->SetY(-15);
+        $this->SetFont('Arial', 'I', 8);
+        $this->Cell(0, 10, 'Página ' . $this->PageNo(), 0, 0, 'C');
+    }
+}
+
+// Conexión a la base de datos
+$conexion = mysqli_connect('localhost', 'root', '', 'base-pruebas') or die ("Error de conexión");
+
+// Consulta a la base de datos
+$query = "SELECT user_id, username, first_name, gender FROM user_details";
+$resultado = mysqli_query($conexion, $query) or die ("Error en la consulta");
+
+// Creación del PDF
+$pdf = new PDF();
+$pdf->AddPage();
+
+// Configuración de las columnas
+$pdf->SetFont('Arial', 'B', 12);
+$pdf->Cell(30, 10, 'User ID', 1);
+$pdf->Cell(40, 10, 'Username', 1);
+$pdf->Cell(50, 10, 'First Name', 1);
+$pdf->Cell(30, 10, 'Gender', 1);
+$pdf->Ln(); // Salto de línea
+
+// Mostrar los datos de la tabla
+$pdf->SetFont('Arial', '', 10);
+while ($fila = mysqli_fetch_assoc($resultado)) {
+    $pdf->Cell(30, 10, $fila['user_id'], 1);
+    $pdf->Cell(40, 10, $fila['username'], 1);
+    $pdf->Cell(50, 10, $fila['first_name'], 1);
+    $pdf->Cell(30, 10, $fila['gender'], 1);
+    $pdf->Ln(); // Salto de línea
+}
+
+// Salida del PDF
+$pdf->Output();
+?>
